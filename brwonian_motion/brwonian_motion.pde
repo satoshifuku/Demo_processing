@@ -12,6 +12,8 @@ float speed = 100.0;
 int radius_smallest = 1;
 int radius_biggest = 9;
 
+boolean mode_depth0field = false;
+
 void setup()
 {
   size(1500,1000);
@@ -60,6 +62,8 @@ class Particle
   
   float scaled_speed;
 
+  float dof;
+
   Particle(PVector locat,float rr, float speed_, int id_,Particle[] others_)
   {
     location = locat;
@@ -72,6 +76,7 @@ class Particle
     
     translation = new PVector(random(-1, 1) * scaled_speed, random(-1, 1) * scaled_speed);
 
+    dof = pow(radius /radius_biggest, 2); //f^2/nc (n = 1, c = 1)
   }
   
   void collide()
@@ -151,9 +156,16 @@ class Particle
     ellipseMode(RADIUS);
     noStroke();
     if (focus == true)
-      fill(color_particle);
+      if (mode_depth0field == false)
+        fill(color_particle);
+      else
+
+        fill(color_particle, 255 * dof);      
     else
-      fill(color_focus); 
+      if (mode_depth0field == false)
+        fill(color_focus);
+      else
+        fill(color_focus, 255 * dof);
     ellipse(location.x,location.y,radius,radius);
   }
   
