@@ -1,4 +1,4 @@
-int n_particles = 1000;
+int n_particles = 500;
 Particle[] particles = new Particle[n_particles];
 
 boolean setcolor = false;
@@ -16,7 +16,7 @@ boolean mode_depth0field = false;
 
 void setup()
 {
-  size(1500,1000);
+  size(1000,500);
   
   for(int i=0;i<n_particles;i++)
   {
