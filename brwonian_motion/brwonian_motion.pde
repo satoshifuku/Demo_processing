@@ -95,14 +95,14 @@ class Particle
         float ang = atan2(vector_particles.y, vector_particles.x);
         PVector temp = new PVector(location.x + cos(ang) * dist_two_particle, 
                                           location.y + sin(ang) * dist_two_particle);
-        PVector aa = new PVector((temp.x - others[i].location.x) * elasticity, 
+        PVector collision = new PVector((temp.x - others[i].location.x) * elasticity, 
                                  (temp.y - others[i].location.y) * elasticity);        	
 
         //own
-        PVector aa_inverse = aa.copy().mult(-1);
-        translation.add(aa_inverse);
+        PVector collision_inverse = collision.copy().mult(-1);
+        translation.add(collision_inverse);
         //other
-        others[i].translation.add(aa);
+        others[i].translation.add(collision);
 
       }      
     }
@@ -141,8 +141,8 @@ class Particle
 
     // Inverse a translation of a particle.
     if(coll_window == true){
-      PVector aa_inverse = translation.copy().mult(-1);      
-      translation = aa_inverse.copy();    
+      PVector collision_inverse = translation.copy().mult(-1);      
+      translation = collision_inverse.copy();    
     }
   }
   
