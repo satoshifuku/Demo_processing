@@ -64,6 +64,8 @@ class Particle
 
   float dof;
 
+  PVector wall_v = new PVector(0, 0);
+
   Particle(PVector locat,float rr, float speed_, int id_,Particle[] others_)
   {
     location = locat;
@@ -119,35 +121,43 @@ class Particle
     location.add(translation);
 
     boolean coll_window = false;
+    float dist = 10000000.0;
 
     // Collide a particle in the y-axis of window wedge.
     if (location.x > (width-radius))
     {
       location.x = width-radius;
-      coll_window = true;
+      wall_v.set(-1, 0);
+      dist = abs(location.x - (width-radius));
     }
     else if (location.x < radius)
     {
       location.x = radius;
-      coll_window = true;
+      wall_v.set(1, 0);
+      dist = abs(location.x - radius);
     }
 
     // Collide a particle in the x-axis.
     if (location.y > (height-radius))
     {
       location.y = height-radius;
-      coll_window = true;
+      wall_v.set(0, -1);
+      dist = abs(location.y - (height-radius));      
     }
     else if (location.y < radius)
     {
       location.y = radius;
-      coll_window = true;
+      wall_v.set(0, 1);
+      dist = abs(location.y - radius);      
     }
 
     // Inverse a translation of a particle.
-    if(coll_window == true){
-      PVector collision_inverse = translation.copy().mult(-1);      
-      translation = collision_inverse.copy();    
+    if(dist < 10000000.0){
+
+      float ref_len = 2.0 * PVector.dot(translation, wall_v);
+      PVector ref_v = PVector.sub(translation, wall_v.copy().mult(ref_len));
+      //own
+      translation = ref_v.copy();
     }
   }
   
