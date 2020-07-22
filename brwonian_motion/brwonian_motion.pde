@@ -39,6 +39,7 @@ void draw()
     particles[i].move();
     particles[i].collide();
 
+
     flag = true;  
     if(n_particles - (int)n_particles/20 < i )
       flag = false;
@@ -97,19 +98,24 @@ class Particle
       float dist_two_particle = others[i].radius + radius;
 
       // When the collide particles.
-      if (dist <= dist_two_particle)
+      if (dist < dist_two_particle)
       {
-        float ang = atan2(vector_particles.y, vector_particles.x);
-        PVector temp = new PVector(location.x + cos(ang) * dist_two_particle, 
-                                          location.y + sin(ang) * dist_two_particle);
-        PVector collision = new PVector((temp.x - others[i].location.x) * elasticity, 
-                                 (temp.y - others[i].location.y) * elasticity);        	
 
-        //own
-        PVector collision_inverse = collision.copy().mult(-1);
-        translation.add(collision_inverse);
+        PVector vector_particles_n = vector_particles.copy().normalize();
+
+        PVector velocity_v = PVector.sub(translation, others[i].translation);
+        vector_particles_n.copy().mult(dist_two_particle - dist);
+        float temp = 0.999*PVector.dot(velocity_v, vector_particles_n);
+        translation.add(vector_particles_n.copy().mult(-temp));
+
         //other
-        others[i].translation.add(collision);
+        velocity_v = PVector.sub(translation, others[i].translation);     
+        others[i].translation.add(vector_particles_n.copy().mult(temp));
+
+        // Push back partickes (not correct. sphere-swept volume is better.)
+        PVector back_v = vector_particles_n.copy().mult(0.5 * (dist_two_particle - dist));
+        location.sub(back_v);
+        others[i].location.sub(back_v.copy().mult(-1.0));
 
       }      
     }
