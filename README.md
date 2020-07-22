@@ -1,1 +1,11 @@
 # Demo_processing
+
+
+### `brwonian_motion.pde`
+
+<img src="https://user-images.githubusercontent.com/8034356/88149940-b4ff7a00-cc3b-11ea-8c42-1a8af6967bc3.png" width="400px">
+
+
+### `wave.pde`
+
+ <img src="https://user-images.githubusercontent.com/8034356/88153758-ce56f500-cc40-11ea-9acc-7c01de5cb076.png" width="400px">
