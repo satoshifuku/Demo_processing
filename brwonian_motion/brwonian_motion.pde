@@ -4,7 +4,7 @@ Particle[] particles = new Particle[n_particles];
 boolean setcolor = false;
 
 color color_background = #ffffff;
-color color_particle = #ffffff;// #ffffff or #959595;
+color color_particle = #959595;// #ffffff or #959595;
 color color_focus =  #dd2743;
 
 float speed = 100.0;
@@ -67,6 +67,8 @@ class Particle
 
   PVector wall_v = new PVector(0, 0);
 
+  float coefficient = 0.9999;
+
   Particle(PVector locat,float rr, float speed_, int id_,Particle[] others_)
   {
     location = locat;
@@ -75,7 +77,7 @@ class Particle
     id = id_;
     others = others_;
 
-    scaled_speed = 10 * speed_/width;    
+    scaled_speed = 10 * speed_/width;
     
     translation = new PVector(random(-1, 1) * scaled_speed, random(-1, 1) * scaled_speed);
 
@@ -86,6 +88,8 @@ class Particle
   {
     int start_by_id = id+1;
     PVector vector_particles;
+    PVector vector_particles_n;
+    PVector velocity_v;
     
     for (int i=start_by_id; i<others.length; i++)
     {
@@ -101,16 +105,17 @@ class Particle
       if (dist < dist_two_particle)
       {
 
-        PVector vector_particles_n = vector_particles.copy().normalize();
+        vector_particles_n = vector_particles.copy().normalize();
 
-        PVector velocity_v = PVector.sub(translation, others[i].translation);
+        velocity_v = PVector.sub(translation, others[i].translation);
         vector_particles_n.copy().mult(dist_two_particle - dist);
-        float temp = 0.999*PVector.dot(velocity_v, vector_particles_n);
-        translation.add(vector_particles_n.copy().mult(-temp));
+        float dot = PVector.dot(velocity_v, vector_particles_n);
+        float dot_m = (1.0 + coefficient)/(radius + others[i].radius) * dot;
+        translation.add(vector_particles_n.copy().mult(-radius * dot_m));
 
         //other
         velocity_v = PVector.sub(translation, others[i].translation);     
-        others[i].translation.add(vector_particles_n.copy().mult(temp));
+        others[i].translation.add(vector_particles_n.copy().mult(others[i].radius * dot_m));
 
         // Push back partickes (not correct. sphere-swept volume is better.)
         PVector back_v = vector_particles_n.copy().mult(0.5 * (dist_two_particle - dist));
