@@ -16,7 +16,7 @@ boolean mode_depth0field = false;
 
 void setup()
 {
-  size(1000,500);
+  size(900,600);
   
   for(int i=0;i<n_particles;i++)
   {
@@ -66,6 +66,12 @@ class Particle
   float dof;
 
   PVector wall_v = new PVector(0, 0);
+  PVector[] wall_vs = {new PVector(-1, 0), new PVector(1, 0),
+                     new PVector(0, -1),new PVector(0, 1)};
+  PVector particles_v;
+  PVector particles_vn;
+  PVector particles_vel_v;
+  PVector back_v;
 
   Particle(PVector locat,float rr, float speed_, int id_,Particle[] others_)
   {
@@ -85,9 +91,6 @@ class Particle
   void collide()
   {
     int start_by_id = id+1;
-    PVector particles_v;
-    PVector particles_vn;
-    PVector particles_vel_v;
     
     for (int i=start_by_id; i<others.length; i++)
     {
@@ -99,26 +102,35 @@ class Particle
       // Distance of collision of two particles
       float dist_two_particle = others[i].radius + radius;
 
+      boolean flag_col = false;
+      if(mode_depth0field == true){
+        if(radius - others[i].radius <= 2.0)
+          flag_col = true;  
+      }
+      else{
+        flag_col = true;
+      }
+
       // When the collide particles.
-      if (dist < dist_two_particle)
+      if ((dist < dist_two_particle) && (flag_col == true))
       {
 
         particles_vn = particles_v.copy().normalize();
 
         particles_vel_v = PVector.sub(velocity, others[i].velocity);
-        particles_vn.copy().mult(dist_two_particle - dist);
         float dot = PVector.dot(particles_vel_v, particles_vn);
         float dot_m = (1.0 + coefficient)/(radius + others[i].radius) * dot;
         velocity.add(particles_vn.copy().mult(-radius * dot_m));
 
         //other
-        particles_vel_v = PVector.sub(velocity, others[i].velocity);     
+        particles_vel_v.mult(-1);
         others[i].velocity.add(particles_vn.copy().mult(others[i].radius * dot_m));
 
-        // Push back partickes (not correct. sphere-swept volume is better.)
-        PVector back_v = particles_vn.copy().mult(0.5 * (dist_two_particle - dist));
+        // Push back partickes along the vector between particles 
+        //(not correct. sphere-swept volume is better.)
+        back_v = particles_vn.copy().mult(0.5 * (dist_two_particle - dist));
         location.sub(back_v);
-        others[i].location.sub(back_v.copy().mult(-1.0));
+        others[i].location.sub(back_v.mult(-1.0));
 
       }      
     }
@@ -129,42 +141,25 @@ class Particle
     //Translate an particle.
     location.add(velocity);
 
-    boolean coll_window = false;
-    float dist = 10000000.0;
+    float dist = 0.0;
+    int wall = -1;
 
     // Collide a particle in the y-axis of window wedge.
     if (location.x > (width-radius))
-    {
-      location.x = width-radius;
-      wall_v.set(-1, 0);
-      dist = abs(location.x - (width-radius));
-    }
+      wall = 0;
     else if (location.x < radius)
-    {
-      location.x = radius;
-      wall_v.set(1, 0);
-      dist = abs(location.x - radius);
-    }
+      wall = 1;
 
     // Collide a particle in the x-axis.
     if (location.y > (height-radius))
-    {
-      location.y = height-radius;
-      wall_v.set(0, -1);
-      dist = abs(location.y - (height-radius));      
-    }
+      wall = 2;
     else if (location.y < radius)
-    {
-      location.y = radius;
-      wall_v.set(0, 1);
-      dist = abs(location.y - radius);      
-    }
+      wall = 3;
 
     // Inverse a velocity of a particle.
-    if(dist < 10000000.0){
-
-      float ref_len = 2.0 * PVector.dot(velocity, wall_v);
-      PVector ref_v = PVector.sub(velocity, wall_v.copy().mult(ref_len));
+    if(wall >= 0){
+      float ref_len = 2.0 * PVector.dot(velocity, wall_vs[wall]);
+      PVector ref_v = PVector.sub(velocity, wall_vs[wall].copy().mult(ref_len));
       //own
       velocity = ref_v.copy();
     }
@@ -178,7 +173,6 @@ class Particle
       if (mode_depth0field == false)
         fill(color_particle);
       else
-
         fill(color_particle, 255 * dof);      
     else
       if (mode_depth0field == false)
