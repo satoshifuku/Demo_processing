@@ -53,11 +53,11 @@ void draw()
 class Particle
 {
   PVector location;
-  float radius;
+  PVector velocity;
+  float radius;  
 
-  PVector translation;
-  
-  float elasticity = 0.1;
+  float coefficient = 0.9999;
+
   int id;
   Particle[] others;
   
@@ -66,8 +66,6 @@ class Particle
   float dof;
 
   PVector wall_v = new PVector(0, 0);
-
-  float coefficient = 0.9999;
 
   Particle(PVector locat,float rr, float speed_, int id_,Particle[] others_)
   {
@@ -79,7 +77,7 @@ class Particle
 
     scaled_speed = 10 * speed_/width;
     
-    translation = new PVector(random(-1, 1) * scaled_speed, random(-1, 1) * scaled_speed);
+    velocity = new PVector(random(-1, 1) * scaled_speed, random(-1, 1) * scaled_speed);
 
     dof = pow(radius /radius_biggest, 2); //f^2/nc (n = 1, c = 1)
   }
@@ -87,16 +85,16 @@ class Particle
   void collide()
   {
     int start_by_id = id+1;
-    PVector vector_particles;
-    PVector vector_particles_n;
-    PVector velocity_v;
+    PVector particles_v;
+    PVector particles_vn;
+    PVector particles_vel_v;
     
     for (int i=start_by_id; i<others.length; i++)
     {
 
       //Current distance of two particles.      
-      vector_particles = PVector.sub(others[i].location, location);
-      float dist = sqrt( pow(vector_particles.x, 2) + pow(vector_particles.y, 2));
+      particles_v = PVector.sub(others[i].location, location);
+      float dist = particles_v.mag();
 
       // Distance of collision of two particles
       float dist_two_particle = others[i].radius + radius;
@@ -105,20 +103,20 @@ class Particle
       if (dist < dist_two_particle)
       {
 
-        vector_particles_n = vector_particles.copy().normalize();
+        particles_vn = particles_v.copy().normalize();
 
-        velocity_v = PVector.sub(translation, others[i].translation);
-        vector_particles_n.copy().mult(dist_two_particle - dist);
-        float dot = PVector.dot(velocity_v, vector_particles_n);
+        particles_vel_v = PVector.sub(velocity, others[i].velocity);
+        particles_vn.copy().mult(dist_two_particle - dist);
+        float dot = PVector.dot(particles_vel_v, particles_vn);
         float dot_m = (1.0 + coefficient)/(radius + others[i].radius) * dot;
-        translation.add(vector_particles_n.copy().mult(-radius * dot_m));
+        velocity.add(particles_vn.copy().mult(-radius * dot_m));
 
         //other
-        velocity_v = PVector.sub(translation, others[i].translation);     
-        others[i].translation.add(vector_particles_n.copy().mult(others[i].radius * dot_m));
+        particles_vel_v = PVector.sub(velocity, others[i].velocity);     
+        others[i].velocity.add(particles_vn.copy().mult(others[i].radius * dot_m));
 
         // Push back partickes (not correct. sphere-swept volume is better.)
-        PVector back_v = vector_particles_n.copy().mult(0.5 * (dist_two_particle - dist));
+        PVector back_v = particles_vn.copy().mult(0.5 * (dist_two_particle - dist));
         location.sub(back_v);
         others[i].location.sub(back_v.copy().mult(-1.0));
 
@@ -129,7 +127,7 @@ class Particle
   void move()
   {
     //Translate an particle.
-    location.add(translation);
+    location.add(velocity);
 
     boolean coll_window = false;
     float dist = 10000000.0;
@@ -162,13 +160,13 @@ class Particle
       dist = abs(location.y - radius);      
     }
 
-    // Inverse a translation of a particle.
+    // Inverse a velocity of a particle.
     if(dist < 10000000.0){
 
-      float ref_len = 2.0 * PVector.dot(translation, wall_v);
-      PVector ref_v = PVector.sub(translation, wall_v.copy().mult(ref_len));
+      float ref_len = 2.0 * PVector.dot(velocity, wall_v);
+      PVector ref_v = PVector.sub(velocity, wall_v.copy().mult(ref_len));
       //own
-      translation = ref_v.copy();
+      velocity = ref_v.copy();
     }
   }
   
