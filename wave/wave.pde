@@ -63,19 +63,19 @@ void draw() {
     fill(color_focus);
     
     for (int x=0; x<n_grid_w; x++){
-        for (int y=0; y<n_grid_h; y++){
-            
-            float aa = radius * (exp(3*ut_feature[x][y] - 1) - 1);
-            
-            if(mode_grid == 1){
-              ellipse(radius*(x+0.5),radius*(y+0.5), aa, aa);
-            }
-            else if (mode_grid == 2) {
-            fill(color_focus, alpha_weight * 100 * (exp(ut_current[x][y]) - 1 ));
-            ellipse(radius*(x+0.5),radius*(y+0.5),radius/2, radius/2);                          
-            }
-            else {
-            }
+      for (int y=0; y<n_grid_h; y++){
+          
+        float aa = radius * (exp(3*ut_feature[x][y] - 1) - 1);
+        
+        if(mode_grid == 1){
+          ellipse(radius*(x+0.5),radius*(y+0.5), aa, aa);
+        }
+        else if (mode_grid == 2) {
+        fill(color_focus, alpha_weight * 100 * (exp(ut_current[x][y]) - 1 ));
+        ellipse(radius*(x+0.5),radius*(y+0.5),radius/2, radius/2);                          
+        }
+        else {
+        }
 
     }
   }
@@ -91,15 +91,14 @@ void update_simulation()
   update_uts_value();
   calcurate_u_feature();
   set_boundary();
-
 }
 
 void calcurate_u_feature(){
 
   for (int x=1; x<n_grid_w-1; x++) {
     for (int y=1; y<n_grid_h-1; y++) {
-          ut_feature[x][y] = 2*ut_current[x][y] - ut_past[x][y] +
-                             s2*(calcurate_ux(x, y) + calcurate_uy(x, y));
+      ut_feature[x][y] = 2*ut_current[x][y] - ut_past[x][y] +
+                          s2*(calcurate_ux(x, y) + calcurate_uy(x, y));
     }
   }
 
@@ -119,25 +118,25 @@ float calcurate_uy(int x, int y){
 void set_boundary(){
 
   for (int x=0; x<n_grid_w; x++){
-      for (int y=0; y<n_grid_h; y++){
+    for (int y=0; y<n_grid_h; y++){
 
-      //In x
-      ut_feature[0][y] = 0;
-      ut_feature[n_grid_w-1][y] = 0;
+    //In x
+    ut_feature[0][y] = 0;
+    ut_feature[n_grid_w-1][y] = 0;
 
-      //In y
-      ut_feature[x][0] = 0;
-      ut_feature[x][n_grid_h-1] = 0;
-      }
+    //In y
+    ut_feature[x][0] = 0;
+    ut_feature[x][n_grid_h-1] = 0;
+    }
   }
 }
 
 void update_uts_value(){
   
   for (int x=0; x<n_grid_w; x++){
-      for (int y=0; y<n_grid_h; y++){
-        ut_past[x][y] = ut_current[x][y];
-        ut_current[x][y] = ut_feature[x][y];
+    for (int y=0; y<n_grid_h; y++){
+      ut_past[x][y] = ut_current[x][y];
+      ut_current[x][y] = ut_feature[x][y];
     }
   }
 
