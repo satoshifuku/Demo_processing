@@ -10,6 +10,7 @@ color color_focus =  #dd2743;
 float speed = 100.0; // Maximum speed of the particles.
 float delta_t = 1.0; //Step time in the simulation.
 
+//The smallest and biggest radius of the particle.
 int radius_smallest = 1;
 int radius_biggest = 9;
 
@@ -149,16 +150,17 @@ class Particle
     for(int i=0;i<4;i++){
       pivot = new PVector(width * (int)(byte(i)&byte(1)), height * (int)(byte(i)&byte(2)>>1));
       wall_vn = wall_vs[i].copy().rotate(HALF_PI);      
-      PVector from_pivot = location.copy().sub(pivot);
-      dist = abs(cross2d(wall_vs[i], from_pivot))/ wall_vs[i].mag();
+      PVector from_pivot = location.copy().sub(pivot);  //Vector from pivot to a location of the particle.
+      dist = abs(cross2d(wall_vs[i], from_pivot))/ wall_vs[i].mag(); // Virtical distance from the wall to the particle.
 
       if ( dist <= radius){
         // Push back particke
         location.add(wall_vn.copy().mult(abs(dist - radius)));
 
+        //bounce the particle
         float ref_len = 2.0 * PVector.dot(velocity, wall_vn);
         PVector ref_v = PVector.sub(velocity, wall_vn.copy().mult(ref_len));
-      velocity = ref_v.copy();
+        velocity = ref_v.copy();
     }
   }
   
