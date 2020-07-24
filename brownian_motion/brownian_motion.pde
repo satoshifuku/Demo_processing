@@ -14,6 +14,11 @@ int radius_biggest = 9;
 
 boolean mode_depth0field = false;
 
+//up, right, left, bottom
+PVector[] wall_vs = {new PVector(1, 0), new PVector(0, 1),
+                  new PVector(0, -1), new PVector(-1, 0)}; 
+PVector wall_vn; 
+
 void setup()
 {
   size(900,600);
@@ -38,7 +43,6 @@ void draw()
 
     particles[i].move();
     particles[i].collide();
-
 
     flag = true;  
     if(n_particles - (int)n_particles/20 < i )
@@ -65,14 +69,12 @@ class Particle
 
   float dof;
 
-  PVector wall_v = new PVector(0, 0);
-  PVector[] wall_vs = {new PVector(-1, 0), new PVector(1, 0),
-                     new PVector(0, -1),new PVector(0, 1)};
-  PVector particles_v;
-  PVector particles_vn;
+  PVector particles_v, particles_vn;
   PVector particles_vel_v;
   PVector back_v;
 
+  PVector pivot; 
+ 
   Particle(PVector locat,float rr, float speed_, int id_,Particle[] others_)
   {
     location = locat;
@@ -142,27 +144,24 @@ class Particle
     location.add(velocity);
 
     float dist = 0.0;
-    int wall = -1;
 
-    // Collide a particle in the y-axis of window wedge.
-    if (location.x > (width-radius))
-      wall = 0;
-    else if (location.x < radius)
-      wall = 1;
+    for(int i=0;i<4;i++){
+      pivot = new PVector(width * (int)(byte(i)&byte(1)), height * (int)(byte(i)&byte(2)>>1));
+      wall_vn = wall_vs[i].copy().rotate(HALF_PI);      
+      PVector from_pivot = location.copy().sub(pivot);
+      dist = abs(cross2d(wall_vs[i], from_pivot))/ wall_vs[i].mag();
 
-    // Collide a particle in the x-axis.
-    if (location.y > (height-radius))
-      wall = 2;
-    else if (location.y < radius)
-      wall = 3;
+      if ( dist <= radius){
+        // Push back particke
+        location.add(wall_vn.copy().mult(abs(dist - radius)));
 
-    // Inverse a velocity of a particle.
-    if(wall >= 0){
-      float ref_len = 2.0 * PVector.dot(velocity, wall_vs[wall]);
-      PVector ref_v = PVector.sub(velocity, wall_vs[wall].copy().mult(ref_len));
-      //own
+        float ref_len = 2.0 * PVector.dot(velocity, wall_vn);
+        PVector ref_v = PVector.sub(velocity, wall_vn.copy().mult(ref_len));
       velocity = ref_v.copy();
     }
+  }
+  
+
   }
   
   void draw(boolean focus)
@@ -182,4 +181,9 @@ class Particle
     ellipse(location.x,location.y,radius,radius);
   }
   
+
+  float cross2d(PVector v1, PVector v2){
+    return v1.x*v2.y-v2.x*v1.y;
+  }  
+
 }
