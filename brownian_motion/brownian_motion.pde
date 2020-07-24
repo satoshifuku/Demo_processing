@@ -1,4 +1,4 @@
-int n_particles = 500;
+int n_particles = 1000;
 Particle[] particles = new Particle[n_particles];
 
 boolean setcolor = false;
@@ -74,7 +74,7 @@ class Particle
   PVector particles_v, particles_vn;
   PVector particles_vel_v;
   PVector back_v;
-
+  PVector from_pivot;
   PVector pivot; 
  
   Particle(PVector locat,float rr, float speed_, int id_,Particle[] others_)
@@ -154,7 +154,7 @@ class Particle
     for(int i=0;i<4;i++){
       pivot = new PVector(width * (int)(byte(i)&byte(1)), height * (int)(byte(i)&byte(2)>>1));
       wall_vn = wall_vs[i].copy().rotate(HALF_PI);      
-      PVector from_pivot = location.copy().sub(pivot);  //Vector from pivot to a location of the particle.
+      from_pivot = location.copy().sub(pivot);  //Vector from pivot to a location of the particle.
       dist = abs(cross2d(wall_vs[i], from_pivot))/ wall_vs[i].mag(); // Virtical distance from the wall to the particle.
 
       if ( dist <= radius){
