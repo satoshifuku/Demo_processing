@@ -69,7 +69,7 @@ class Particle
   
   float scaled_speed;
 
-  float dof;
+  float dof = 1.0;
 
   PVector particles_v, particles_vn;
   PVector particles_vel_v;
@@ -87,8 +87,12 @@ class Particle
 
     scaled_speed = 10 * speed_/width;
     
-    velocity = new PVector(random(-1, 1) * scaled_speed, random(-1, 1) * scaled_speed);
-
+    if(mode_depth0field == false)    
+      velocity = new PVector(random(-1, 1), random(-1, 1)).mult(scaled_speed);
+    else{
+      float tt = 5 * pow(radius /radius_biggest, 2);
+      velocity = new PVector(random(-1, 1), random(-1, 1)).mult(scaled_speed * tt);      
+    }
     dof = pow(radius /radius_biggest, 2); //f^2/nc (n = 1, c = 1)
   }
   
