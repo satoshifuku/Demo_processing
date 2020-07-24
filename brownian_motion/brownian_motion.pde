@@ -7,7 +7,8 @@ color color_background = #ffffff;
 color color_particle = #959595;// #ffffff or #959595;
 color color_focus =  #dd2743;
 
-float speed = 100.0;
+float speed = 100.0; // Maximum speed of the particles.
+float delta_t = 1.0; //Step time in the simulation.
 
 int radius_smallest = 1;
 int radius_biggest = 9;
@@ -141,7 +142,7 @@ class Particle
   void move()
   {
     //Translate an particle.
-    location.add(velocity);
+    location.add(PVector.mult(velocity, delta_t));
 
     float dist = 0.0;
 
