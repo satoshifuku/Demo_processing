@@ -116,14 +116,14 @@ class Stars
 {
   PVector[] location;
   PVector velosity;
-  int length = 20;
+  int len_tail = 25;
   int life = 40;
   int togo;
   color c;
 
   Stars(float speed, float rad, color c_){
-    location = new PVector[length];
-    for (int i = 0; i < length; ++i) {
+    location = new PVector[len_tail];
+    for (int i = 0; i < len_tail; ++i) {
       location[i] = new PVector(-1, -1);  
     }
 
@@ -134,14 +134,14 @@ class Stars
   }
 
   void draw(PVector c_locat){
-    for (int i = 1; i < length; ++i) {
+    for (int i = 1; i < len_tail; ++i) {
         stroke(c, 255*togo/life);
-        strokeWeight(10 * (length - i)/length);
+        strokeWeight(10 * (len_tail - i)/len_tail);
         line(location[i-1].x + c_locat.x, location[i-1].y + c_locat.y, 
              location[i].x + c_locat.x, location[i].y + c_locat.y);        
     }
 
-    for (int i = length-1; i > 0; i--) {
+    for (int i = len_tail-1; i > 0; i--) {
       location[i] = location[i-1].copy();
     }
 
