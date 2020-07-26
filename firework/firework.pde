@@ -18,7 +18,7 @@ void draw()
       fireworks.get(i).lift_shell();
     }
     if (fireworks.get(i).mode == 1 ) {
-       for (int j = 0; j < 36; j++) {
+       for (int j = 0; j < fireworks.get(i).n_star; j++) {
           fireworks.get(i).stars[j].draw(fireworks.get(i).point);         
        }
     }
@@ -46,14 +46,14 @@ class Firework
   color c;
   float t;
 
-  int life = 30;
+  int life = 50;
 
   int mode = 0;
   PVector point;
 
   int n_star = 36;
 
-  Stars[] stars = new Stars[36];
+  Stars[] stars = new Stars[n_star];
 
   Firework(int x, int y){
     
