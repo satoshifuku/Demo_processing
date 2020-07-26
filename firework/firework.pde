@@ -34,19 +34,17 @@ void mousePressed() {
 class Firework
 {
   PVector location;
-  float v = 0;
-  int lifespan;
+  float v, v_0;
   int fade;
   color c;
 
   float t;
-  float v_0;
+
   Firework(int x, int y){
     location = new PVector(x, height);  
     v_0 = -sqrt(2 * (height - y) * gravity);
     v = v_0;
     t = -v_0/gravity;
-    lifespan = 255;
     fade = (int)random(1, 5);
     colorMode(HSB, 255);
     c = color((int)random(0, 255), 120, 255);
@@ -54,6 +52,7 @@ class Firework
 
   void to_clicked_location(){
     noStroke();
+    location.x = random(-1 + location.x, 1 + location.x);
     v += gravity * delta_t;
     location.y += v * delta_t;
     t -= delta_t;
