@@ -70,8 +70,10 @@ class Firework
     colorMode(HSB, 255);
     c = color((int)random(0, 255), 120, 255);
 
+    // int temp_mode = (int)random(1, 3)%2;
     for (int i = 0; i < n_star; ++i) {
       stars[i] = new Stars(50, (i + random(-0.4, 0.4))*(2*PI/(n_star)), c );
+      // stars[i].color_mode = temp_mode;
     }
 
   }
@@ -120,6 +122,7 @@ class Stars
   int life = 40;
   int togo;
   color c;
+  int color_mode =0;
 
   Stars(float speed, float rad, color c_){
     location = new PVector[len_tail];
@@ -135,7 +138,13 @@ class Stars
 
   void draw(PVector c_locat){
     for (int i = 1; i < len_tail; ++i) {
-        stroke(c, 255*togo/life);
+      if (color_mode == 0) {
+        stroke(c, 255*togo/life);        
+      }
+      else{
+        color cc = color(hue(c)*(len_tail-random(0.1, 0.9)*i)/len_tail,saturation(c),brightness(c));
+        stroke(cc, 255*togo/life);        
+      }
         strokeWeight(10 * (len_tail - i)/len_tail);
         line(location[i-1].x + c_locat.x, location[i-1].y + c_locat.y, 
              location[i].x + c_locat.x, location[i].y + c_locat.y);        
