@@ -42,7 +42,7 @@ class Firework
   float shll_radius = 10.0;
   PVector[] location;
   float v, v_0;
-  int fade;
+
   color c;
   float t;
 
@@ -66,7 +66,6 @@ class Firework
     v = v_0 = -sqrt(2 * (height - y) * gravity);
     t = -v_0/gravity;
 
-    fade = (int)random(1, 5);
     colorMode(HSB, 255);
     c = color((int)random(0, 255), 120, 255);
 
@@ -132,6 +131,7 @@ class Stars
 
     location[0].set(0.0,0.0);
     velosity = new PVector(speed * cos(rad), speed * sin(rad));
+    life += (int)random(-5, 5);
     togo = life;
     c = c_;
   }
