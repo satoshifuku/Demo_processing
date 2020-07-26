@@ -42,9 +42,9 @@ class Firework
   float shll_radius = 10.0;
   PVector[] location;
   float v, v_0;
-
+  float time;
   color c;
-  float t;
+
 
   int life = 50;
 
@@ -64,27 +64,30 @@ class Firework
       location[i] = new PVector(x, height); 
     
     v = v_0 = -sqrt(2 * (height - y) * gravity);
-    t = -v_0/gravity;
+    time = -v_0/gravity;
 
     colorMode(HSB, 255);
     c = color((int)random(0, 255), 120, 255);
 
-    // int temp_mode = (int)random(1, 3)%2;
+    // mono : transition = 2 : 1
+    int temp_mode = (int)random(1, 3)%2;
+
     for (int i = 0; i < n_star; ++i) {
-      stars[i] = new Stars(50, (i + random(-0.4, 0.4))*(2*PI/(n_star)), c );
-      // stars[i].color_mode = temp_mode;
+      stars[i] = new Stars(50, (i + random(-0.4, 0.4))*(2*PI/n_star), c);
+      stars[i].color_mode = temp_mode;
     }
 
   }
+
+  // The function must be used for the transition of modes.
   void checked_mode(){
-    if (t <= 0 && mode == 0) {
+    if (time <= 0 && mode == 0) {
       mode = 1;
       point = location[0].copy();
     }
     else if (stars[0].togo <= 0 && mode == 1) {
       mode = 2;
     }
-
   }
 
   void lift_shell(){
@@ -95,20 +98,18 @@ class Firework
       fill(c, 255*temp);
       ellipse(location[i].x, location[i].y, 
               shll_radius*temp, shll_radius*temp);
-
     }
-    update_shell_location();
+    update_location();
     for (int i = life-1; i > 0; i--) {
       location[i] = location[i-1].copy();
-    }
-    
+    }    
   }
 
-  void update_shell_location(){
+  void update_location(){
     location[0].x = random(-1 + location[0].x, 1 + location[0].x);
     v += gravity * delta_t;
     location[0].y += v * delta_t;
-    t -= delta_t;
+    time -= delta_t;
   }
 }
 
@@ -145,18 +146,22 @@ class Stars
         color cc = color(hue(c)*(len_tail-random(0.1, 0.9)*i)/len_tail,saturation(c),brightness(c));
         stroke(cc, 255*togo/life);        
       }
-        strokeWeight(10 * (len_tail - i)/len_tail);
-        line(location[i-1].x + c_locat.x, location[i-1].y + c_locat.y, 
-             location[i].x + c_locat.x, location[i].y + c_locat.y);        
+      strokeWeight(10 * (len_tail - i)/len_tail);
+      line(location[i-1].x + c_locat.x, location[i-1].y + c_locat.y, 
+            location[i].x + c_locat.x, location[i].y + c_locat.y);        
     }
 
-    for (int i = len_tail-1; i > 0; i--) {
+    for (int i = len_tail-1; i > 0; i--)
       location[i] = location[i-1].copy();
-    }
 
+    update_location();
+  
+  }
+
+  void update_location(){
     velosity.y += gravity * delta_t;
     location[0].add(velosity.copy().mult(delta_t));
     togo--;
-
   }
+
 }
