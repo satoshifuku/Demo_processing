@@ -45,7 +45,6 @@ class Firework
   float time;
   color c;
 
-
   int life = 50;
 
   int mode = 0;
@@ -53,7 +52,7 @@ class Firework
 
   int n_star = 36;
 
-  Stars[] stars = new Stars[n_star];
+  Stars[] stars;
 
   Firework(int x, int y){
     
@@ -69,6 +68,8 @@ class Firework
     colorMode(HSB, 255);
     c = color((int)random(0, 255), 120, 255);
 
+    n_star += (int)random(-20, 5);
+    stars = new Stars[n_star];
     // mono : transition = 2 : 1
     int temp_mode = (int)random(1, 3)%2;
 
