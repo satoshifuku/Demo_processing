@@ -1,4 +1,4 @@
-int n_particles = 1000;
+int n_particles = 500;
 Particle[] particles = new Particle[n_particles];
 
 boolean setcolor = false;
@@ -61,6 +61,7 @@ class Particle
   PVector location;
   PVector velocity;
   float radius;  
+  float mass;    
 
   float coefficient = 0.9999;
 
@@ -81,6 +82,7 @@ class Particle
   {
     location = locat;
     radius = rr;
+    mass = radius;
     
     id = id_;
     others = others_;
@@ -127,12 +129,12 @@ class Particle
 
         particles_vel_v = PVector.sub(velocity, others[i].velocity);
         float dot = PVector.dot(particles_vel_v, particles_vn);
-        float dot_m = (1.0 + coefficient)/(radius + others[i].radius) * dot;
-        velocity.add(particles_vn.copy().mult(-radius * dot_m));
+        float dot_m = (1.0 + coefficient)/(mass + others[i].mass) * dot;
+        velocity.add(particles_vn.copy().mult(-others[i].mass * dot_m));
 
         //other
         particles_vel_v.mult(-1);
-        others[i].velocity.add(particles_vn.copy().mult(others[i].radius * dot_m));
+        others[i].velocity.add(particles_vn.copy().mult(mass * dot_m));
 
         // Push back partickes along the vector between particles 
         //(not correct. sphere-swept volume is better.)
