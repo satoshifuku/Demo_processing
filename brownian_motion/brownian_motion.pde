@@ -11,8 +11,8 @@ float speed = 100.0; // Maximum speed of the particles.
 float delta_t = 1.0; //Step time in the simulation.
 
 //The smallest and biggest radius of the particle.
-int radius_smallest = 1;
-int radius_biggest = 9;
+int radius_smallest = 2;
+int radius_biggest = 15;
 
 boolean mode_depth0field = false;
 
@@ -28,10 +28,18 @@ void setup()
   for(int i=0;i<n_particles;i++)
   {
     float radius_particle = random(radius_smallest, radius_biggest);
+    if (n_particles-1 ==i) {
+      radius_particle = 10;
+    }
     PVector pv = new PVector(random(radius_particle, width - radius_particle), 
                              random(radius_particle, height - radius_particle));
 
     particles[i] = new Particle(pv, radius_particle, speed, i, particles);
+    if (n_particles-1 ==i) {
+      particles[i].radius = 30;
+      particles[i].mass = 100000;
+      particles[i].velocity = new PVector(0.0,0.0);
+    }
   }
 }
 
@@ -47,7 +55,7 @@ void draw()
     particles[i].collide();
 
     flag = true;  
-    if(n_particles - (int)n_particles/20 < i )
+    if(n_particles-1 ==i)
       flag = false;
     particles[i].draw(flag);  
   
@@ -60,7 +68,7 @@ class Particle
 {
   PVector location;
   PVector velocity;
-  float radius;  
+  float radius;
   float mass;    
 
   float coefficient = 0.9999;
@@ -83,7 +91,7 @@ class Particle
     location = locat;
     radius = rr;
     mass = radius;
-    
+
     id = id_;
     others = others_;
 
