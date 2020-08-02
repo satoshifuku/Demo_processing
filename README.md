@@ -13,3 +13,10 @@
 `./wave/wave.pde`
 
  <img src="https://user-images.githubusercontent.com/8034356/88153758-ce56f500-cc40-11ea-9acc-7c01de5cb076.png" width="400px">
+
+### Firwork 
+
+`./firwork/firwork.pde`
+
+
+<img width="449" alt="desktop" src="https://user-images.githubusercontent.com/8034356/89119611-a8580d00-d4ea-11ea-9d98-9fc778630988.png"  width="400px">
